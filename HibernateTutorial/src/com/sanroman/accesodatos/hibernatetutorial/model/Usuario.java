@@ -1,35 +1,64 @@
 package com.sanroman.accesodatos.hibernatetutorial.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.CollectionId;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 @Entity
+@Table(name="user_table")
 public class Usuario {
-	
 	@Id
+	@Column(name="user_id")
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
-	private String nombre;
-	private String domicilio;
+	@Column(name="user_name")
+	private String name;
+	@Column(name="user_email")
 	private String email;
+	@Column(name="user_telephone")
 	private String telefono;
+	@ElementCollection
+	@GenericGenerator(name="hilo-gen",strategy="hilo")
+	@JoinTable(name="user_domicilio",joinColumns={@JoinColumn(name="user_id")})
+	@CollectionId(columns = { @Column(name="domicilio_id") }, generator = "hilo-gen", type = @Type(type = "long"))
+	private List<Domicilio> domicilios=new ArrayList<Domicilio>();
+	
+	
+	public List<Domicilio> getDomicilios() {
+		return domicilios;
+	}
+	public void setDomicilios(List<Domicilio> domicilios) {
+		this.domicilios = domicilios;
+	}
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getNombre() {
-		return nombre;
+	public String getName() {
+		return name;
 	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getDomicilio() {
-		return domicilio;
-	}
-	public void setDomicilio(String domicilio) {
-		this.domicilio = domicilio;
-	}
+	
 	public String getEmail() {
 		return email;
 	}
@@ -43,7 +72,7 @@ public class Usuario {
 		this.telefono = telefono;
 	}
 	public void print() {
-		System.out.println("Usuario: "+id+" Nombre: "+nombre);
+		System.out.println("User[id:" + id +", nombre:" + name +  "]");
 		
 	}
 	
